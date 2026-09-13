@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=0.8, minimum-scale=0.8, maximum-scale=0.8, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="keywords" content="scuola,registro,elettronico,giua@school,installazione">
     <meta name="description" content="Installazione giua@school: il registro elettronico open source">
     <meta name="author" content="Antonello Dessì">
     <title>Installazione giua@school</title>
-    <link href="../vendor/bootstrap-italia/css/bootstrap-italia.min.css" rel="stylesheet">
+    <link href="../vendor/bootstrap-italia-2.18.3/css/bootstrap-italia.min.css" rel="stylesheet">
     <link href="../css/main.css" rel="stylesheet">
     <link rel="apple-touch-icon" sizes="180x180" href="../apple-icon-180x180.png">
     <link rel="apple-touch-icon" sizes="152x152" href="../apple-icon-152x152.png">
@@ -38,11 +38,11 @@
       <div class="it-header-slim-wrapper p-0">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-12 pr-0">
-              <div class="it-header-slim-wrapper-content pr-0">
+            <div class="col-12 pe-0">
+              <div class="it-header-slim-wrapper-content pe-0">
                 <span class="d-none d-md-block navbar-brand">Registro Elettronico <strong>giua@school</strong></span>
                 <div class="header-slim-right-zone">
-                  <div class="text-white pr-4"><strong><?php echo ($page['version'] == 'INSTALL' ? 'INSTALLAZIONE INIZIALE' : 'AGGIORNAMENTO ALLA VERSIONE '.$page['version']); ?></strong></div>
+                  <div class="text-white pe-4"><strong><?php echo ($page['version'] == 'INSTALL' ? 'INSTALLAZIONE INIZIALE' : 'AGGIORNAMENTO ALLA VERSIONE '.$page['version']); ?></strong></div>
                 </div>
               </div>
             </div>
@@ -51,14 +51,14 @@
       </div>
       <div class="it-nav-wrapper">
         <nav class="breadcrumb-container" aria-label="breadcrumb">
-          <ol class="breadcrumb dark pl-4">
+          <ol class="breadcrumb dark ps-4">
             <li class="breadcrumb-item d-none d-md-block"><span class="d-none d-lg-inline">Passo: </span></li>
-            <li class="breadcrumb-item d-none d-md-block"><span class="ml-3"></span></li>
-            <li class="breadcrumb-item active"><span class="d-inline d-md-none mr-4"></span>
+            <li class="breadcrumb-item d-none d-md-block"><span class="ms-3"></span></li>
+            <li class="breadcrumb-item active"><span class="d-inline d-md-none me-4"></span>
               <span aria-current="page"><?php echo $page['step']; ?></span>
             </li>
+          </ol>
         </nav>
-      </ol>
       </div>
     </header>
     <!-- FINE intestazione pagina -->
@@ -95,7 +95,7 @@
         <!-- TABLE: requirements -->
         <?php if (!empty($page['requirements'])) { ?>
         <table class="table table-bordered table-hover table-striped table-sm">
-          <thead class="thead-light">
+          <thead class="table-light">
             <tr>
               <th class="col-2" scope="col">Tipo</th>
               <th class="col-4" scope="col">Descrizione</th>
@@ -110,11 +110,11 @@
               <td><strong><?php echo $req[0]; ?></strong></td>
               <td>
               <?php if ($req[2]) { ?>
-                <span class="badge badge-success">
+                <span class="badge bg-success">
               <?php } elseif ($reqType == 'mandatory') { ?>
-                <span class="badge badge-danger">
+                <span class="badge bg-danger">
               <?php } else { ?>
-                <span class="badge badge-warning">
+                <span class="badge bg-warning text-dark">
               <?php } echo $req[1]; ?>
                 </span>
               </td>
@@ -134,7 +134,7 @@
             </div>
             <div class="card-body">
               <form name="install" method="post" action="<?php echo $page['postUrl']; ?>">
-                <div class="form-row">
+                <div class="row g-3">
                   <div class="form-group col">
                     <label for="install_db_server" class="required active" style="transition: none 0s ease 0s;">Server database</label>
                     <input type="text" id="install_db_server" name="install[db_server]" required="required" class="form-control" value="<?php echo $page['database']['host']; ?>">
@@ -144,7 +144,7 @@
                     <input type="text" id="install_db_port" name="install[db_port]" required="required" class="form-control" value="<?php echo $page['database']['port']; ?>">
                   </div>
                 </div>
-                <div class="form-row">
+                <div class="row g-3">
                   <div class="form-group col">
                     <label for="install_db_user" class="required active" style="transition: none 0s ease 0s;">Utente database</label>
                     <input type="text" id="install_db_user" name="install[db_user]" required="required" class="form-control" value="<?php echo $page['database']['user']; ?>">
@@ -154,7 +154,7 @@
                     <input type="text" id="install_db_password" name="install[db_password]" required="required" class="form-control" value="<?php echo $page['database']['pass']; ?>">
                   </div>
                 </div>
-                <div class="form-row">
+                <div class="row g-3">
                   <div class="form-group col">
                     <label for="install_db_name" class="required active" style="transition: none 0s ease 0s;">Nome database</label>
                     <input type="text" id="install_db_name" name="install[db_name]" required="required" class="form-control" value="<?php echo substr((string) $page['database']['path'], 1); ?>">
@@ -179,7 +179,7 @@
             </div>
             <div class="card-body">
               <form name="install" method="post" action="<?php echo $page['postUrl']; ?>">
-                <div class="form-row">
+                <div class="row g-3">
                   <div class="form-group col">
                     <label for="install_username" class="required active" style="transition: none 0s ease 0s;">Nome utente</label>
                     <input type="text" id="install_username" name="install[username]" required="required" class="form-control" value="<?php echo $page['admin']; ?>">
@@ -232,7 +232,7 @@
                 <ul class="footer-list link-list">
                   <li>
                     <a class="list-item" href="https://github.com/iisgiua/giuaschool" target="_blank" title="Vai al progetto su GitHub">
-                      <svg class="icon icon-sm icon-light mr-2" aria-hidden="true">
+                      <svg class="icon icon-sm icon-light me-2" aria-hidden="true">
                         <use xlink:href="../vendor/fontawesome/sprites/brands.svg#github"></use>
                       </svg><span class="text-white">Codice sorgente su GitHub</span>
                     </a>
@@ -247,15 +247,15 @@
     <!-- FINE piè di pagina -->
 
     <!-- finestra di attesa -->
-    <div class="modal fade" tabindex="-1" role="dialog" id="gs-waiting">
-      <div class="modal-dialog" role="document">
+    <div class="modal fade" tabindex="-1" id="gs-waiting" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Attendere prego...</h5>
           </div>
           <div class="modal-body mx-auto">
             <div class="progress-spinner progress-spinner-active mb-5">
-              <span class="sr-only">Caricamento...</span>
+              <span class="visually-hidden">Caricamento...</span>
             </div>
           </div>
         </div>
@@ -264,7 +264,7 @@
     <!-- FINE finestra di attesa -->
 
     <!-- link TornaSu  -->
-    <a class="back-to-top back-to-top-small shadow" href="#" aria-hidden="true" data-attribute="back-to-top" title="Vai a inizio pagina">
+    <a class="back-to-top back-to-top-small shadow" href="#" aria-hidden="true" data-bs-toggle="backtotop" title="Vai a inizio pagina">
       <svg class="icon icon-light" aria-hidden="true">
         <use xlink:href="../vendor/fontawesome/sprites/solid.svg#arrow-up"></use>
       </svg>
@@ -272,13 +272,16 @@
     <!-- FINE link TornaSu  -->
 
     <!-- caricamento javascript -->
-    <script>window.__PUBLIC_PATH__ = "../vendor/bootstrap-italia/fonts"</script>
-    <script src="../vendor/bootstrap-italia/js/bootstrap-italia.bundle.min.js"></script>
+    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="../vendor/bootstrap-italia-2.18.3/js/bootstrap-italia.bundle.min.js"></script>
+    <script>bootstrap.loadFonts("../vendor/bootstrap-italia-2.18.3/fonts");</script>
     <script src="../js/main.js"></script>
     <script>
-      $(document).ready(function() {
-        $('.gs-button').click(function() {
-          $('#gs-waiting').modal('show');
+      document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.gs-button').forEach(function(button) {
+          button.addEventListener('click', function() {
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('gs-waiting'), {backdrop: 'static'}).show();
+          });
         });
       });
     </script>

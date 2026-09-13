@@ -66,7 +66,8 @@
   {%- if required and placeholder is none and not placeholder_in_choices and not multiple and (attr.size is not defined or attr.size <= 1) -%}
     {%- set required = false -%}
   {%- endif -%}
-  {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-control')|trim}) -%}
+  {%- set select_class = attr.class|default('')|replace({'form-control': ''})|trim -%}
+  {%- set attr = attr|merge({class: (select_class ~ ' form-select')|trim}) -%}
   <select {{ block('widget_attributes') }}{% if multiple %} multiple="multiple"{% endif %}>
   {%- if placeholder is not none -%}
     <option value=""{% if required and value is empty %} selected="selected"{% endif %}>{{ placeholder != '' ? (translation_domain is same as(false) ? placeholder : placeholder|trans({}, translation_domain)) }}</option>
@@ -105,13 +106,13 @@
 {% block checkbox_widget -%}
   {%- set parent_label_class = parent_label_class|default(label_attr.class|default('')) -%}
   {%- if 'checkbox-custom' in parent_label_class -%}
-    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' custom-control-input')|trim}) -%}
-    <div class="custom-control custom-checkbox{{ 'checkbox-inline' in parent_label_class ? ' custom-control-inline' }}">
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-check-input')|trim}) -%}
+    <div class="form-check{{ 'checkbox-inline' in parent_label_class ? ' form-check-inline' }}">
       {{ form_label(form, null, { widget: block('checkbox_widget_simple') }) }}
     </div>
   {%- elseif 'switch-custom' in parent_label_class -%}
-    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' custom-control-input')|trim}) -%}
-    <div class="custom-control custom-switch{{ 'switch-inline' in parent_label_class ? ' custom-control-inline' }}">
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-check-input')|trim, role: 'switch'}) -%}
+    <div class="form-check form-switch{{ 'switch-inline' in parent_label_class ? ' form-check-inline' }}">
       {{ form_label(form, null, { widget: block('checkbox_widget_simple') }) }}
     </div>
   {%- else -%}
@@ -129,8 +130,8 @@
 {%- block radio_widget -%}
   {%- set parent_label_class = parent_label_class|default(label_attr.class|default('')) -%}
   {%- if 'radio-custom' in parent_label_class -%}
-    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' custom-control-input')|trim}) -%}
-    <div class="custom-control custom-radio{{ 'radio-inline' in parent_label_class ? ' custom-control-inline' }}">
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-check-input')|trim}) -%}
+    <div class="form-check{{ 'radio-inline' in parent_label_class ? ' form-check-inline' }}">
       {{ form_label(form, null, { widget: block('radio_widget_simple') }) }}
     </div>
   {%- else -%}
@@ -143,7 +144,7 @@
 
 {% block date_widget_single_text -%}
   {%- set type = 'text' -%}
-  {%- set attr = attr|merge({class: (attr.class|default('') ~ ' it-date-datepicker')|trim}) -%}
+  {%- set attr = attr|merge({class: (attr.class|default('') ~ ' gs-native-date')|trim, inputmode: 'numeric', autocomplete: 'off'}) -%}
   {%- set attr = attr|merge({placeholder: attr.placeholder|default('label.form_date_placeholder')}) -%}
   {%- set attr = attr|merge({title: attr.title|default('label.form_date_title')}) -%}
   {{ block('form_widget_simple') }}
@@ -162,7 +163,7 @@
       <div {{ block('widget_container_attributes') }}>
     {%- endif -%}
     {%- if label is not same as(false) -%}
-      <div class="sr-only">
+      <div class="visually-hidden">
         {{ form_label(form.year) }}
         {{ form_label(form.month) }}
         {{ form_label(form.day) }}
@@ -184,15 +185,19 @@
     {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-control is-invalid')|trim}) -%}
     {% set valid = true %}
   {%- endif -%}
-  {%- if widget != 'single_text' -%}
+  {%- if widget == 'single_text' -%}
+    {%- set type = 'time' -%}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' gs-native-time')|trim}) -%}
+    {{ block('form_widget_simple') }}
+  {%- else -%}
     {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-inline')|trim}) -%}
     {%- if datetime is not defined or false == datetime -%}
       <div {{ block('widget_container_attributes') }}>
     {%- endif -%}
-    {%- if label is not same as(false) -%}<div class="sr-only">{{ form_label(form.hour) }}</div>{%- endif -%}
+    {%- if label is not same as(false) -%}<div class="visually-hidden">{{ form_label(form.hour) }}</div>{%- endif -%}
     {{ form_widget(form.hour) }}
-    {%- if with_minutes -%}:{%- if label is not same as(false) -%}<div class="sr-only">{{ form_label(form.minute) }}</div>{%- endif -%}{{ form_widget(form.minute) }}{%- endif -%}
-    {%- if with_seconds -%}:{%- if label is not same as(false) -%}<div class="sr-only">{{ form_label(form.second) }}</div>{%- endif -%}{{ form_widget(form.second) }}{%- endif -%}
+    {%- if with_minutes -%}:{%- if label is not same as(false) -%}<div class="visually-hidden">{{ form_label(form.minute) }}</div>{%- endif -%}{{ form_widget(form.minute) }}{%- endif -%}
+    {%- if with_seconds -%}:{%- if label is not same as(false) -%}<div class="visually-hidden">{{ form_label(form.second) }}</div>{%- endif -%}{{ form_widget(form.second) }}{%- endif -%}
     {%- if datetime is not defined or false == datetime -%}
       </div>
     {%- endif -%}
@@ -329,11 +334,13 @@
 
 {%- block form_label -%}
   {%- if label is not same as(false) -%}
+    {%- set label_attr = label_attr|merge({class: label_attr.class|default('')|replace({'sr-only': 'visually-hidden'})|trim}) -%}
     {%- if compound is defined and compound -%}
       {%- set element = 'legend' -%}
       {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' col-form-label')|trim}) -%}
     {%- else -%}
-      {%- set label_attr = label_attr|merge({for: id}) -%}
+      {%- set active_class = ((value is defined and value is not empty) or attr.placeholder is defined) ? ' active' : '' -%}
+      {%- set label_attr = label_attr|merge({for: id, class: (label_attr.class|default('') ~ active_class)|trim}) -%}
     {%- endif -%}
     {%- if required -%}
       {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' required')|trim}) -%}
@@ -371,13 +378,7 @@
 {%- block checkbox_radio_label -%}
   {#- Do not display the label if widget is not defined in order to prevent double label rendering -#}
   {%- if widget is defined -%}
-    {%- set is_parent_custom = parent_label_class is defined and ('checkbox-custom' in parent_label_class or 'radio-custom' in parent_label_class or 'switch-custom' in parent_label_class) -%}
-    {%- set is_custom = label_attr.class is defined and ('checkbox-custom' in label_attr.class or 'radio-custom' in label_attr.class or 'switch-custom' in label_attr.class) -%}
-    {%- if is_parent_custom or is_custom -%}
-      {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' custom-control-label')|trim}) -%}
-    {%- else %}
-      {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' form-check-label')|trim}) -%}
-    {%- endif %}
+    {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' form-check-label')|trim}) -%}
     {%- if not compound -%}
       {%- set label_attr = label_attr|merge({'for': id}) -%}
     {%- endif -%}
@@ -438,7 +439,7 @@
 {%- block form_row -%}
   {%- if attr.widget is defined and attr.widget == 'gs-row-start' -%}
     {%- set inline = true -%}
-    <div class="form-row">
+    <div class="row g-3">
   {%- elseif attr.widget is defined and attr.widget in ['gs-row-inline', 'gs-row-end'] -%}
     {%- set inline = true -%}
   {%- endif -%}
@@ -470,12 +471,12 @@
 {%- block button_row -%}
   {%- if attr.widget is defined and attr.widget == 'gs-button-start' -%}
     <div class="form-group col text-center">
-    {{ form_widget(form, {attr: attr|merge({widget: false, class: (attr.class|default('btn-primary') ~ ' mt-1 ml-3 mr-3')})}) }}
+    {{ form_widget(form, {attr: attr|merge({widget: false, class: (attr.class|default('btn-primary') ~ ' mt-1 ms-3 me-3')})}) }}
   {%- elseif attr.widget is defined and attr.widget == 'gs-button-end' -%}
-    {{ form_widget(form, {attr: attr|merge({widget: false, class: (attr.class|default('btn-secondary') ~ ' mt-1 ml-3 mr-3')})}) }}
+    {{ form_widget(form, {attr: attr|merge({widget: false, class: (attr.class|default('btn-secondary') ~ ' mt-1 ms-3 me-3')})}) }}
     </div>
   {%- elseif attr.widget is defined and attr.widget == 'gs-button-inline' -%}
-    {{ form_widget(form, {attr: attr|merge({widget: false, class: (attr.class|default('btn-secondary') ~ ' mt-1 ml-3 mr-3')})}) }}
+    {{ form_widget(form, {attr: attr|merge({widget: false, class: (attr.class|default('btn-secondary') ~ ' mt-1 ms-3 me-3')})}) }}
   {%- else -%}
     <div{% with {attr: row_attr|merge({class: (row_attr.class|default('') ~ ' form-group' ~ (inline is not defined or not inline ? ' text-center' : ''))|trim})} %}{{ block('attributes') }}{% endwith %}>
       {{ form_widget(form) }}
@@ -490,7 +491,7 @@
 {% block choice_row -%}
   {%- if attr.widget is defined and attr.widget == 'gs-row-start' -%}
     {%- set inline = true -%}
-    <div class="form-row">
+    <div class="row g-3">
   {%- elseif attr.widget is defined and attr.widget in ['gs-row-inline', 'gs-row-end'] -%}
     {%- set inline = true -%}
   {%- endif -%}
@@ -530,7 +531,7 @@
     {%- if attr.widget is defined and attr.widget == 'gs-row-start' -%}
       {%- set attr = attr|merge({widget: ''}) -%}
       {%- set date_inline = true -%}
-      <div class="form-row">
+      <div class="row g-3">
     {%- elseif attr.widget is defined and attr.widget == 'gs-row-inline' -%}
       {%- set attr = attr|merge({widget: ''}) -%}
       {%- set date_inline = true -%}
@@ -538,7 +539,7 @@
       {%- set attr = attr|merge({widget: 'gs-row-end-date'}) -%}
       {%- set date_inline = true -%}
     {%- endif -%}
-    <div class="it-datepicker-wrapper{% if date_inline is defined and date_inline %} col{% endif %}">
+    <div class="gs-date-wrapper{% if date_inline is defined and date_inline %} col{% endif %}">
       {{ block('form_row') }}
     </div>
     {%- if attr.widget is defined and attr.widget == 'gs-row-end-date' -%}
@@ -553,64 +554,20 @@
 {%- block time_row -%}
   {%- if widget == 'single_text' -%}
     {%- if attr.widget is defined and attr.widget == 'gs-row-start' -%}
+      {%- set attr = attr|merge({widget: ''}) -%}
       {%- set time_inline = true -%}
-      <div class="form-row">
+      <div class="row g-3">
     {%- elseif attr.widget is defined and attr.widget == 'gs-row-inline' -%}
+      {%- set attr = attr|merge({widget: ''}) -%}
       {%- set time_inline = true -%}
     {%- elseif attr.widget is defined and attr.widget == 'gs-row-end' -%}
+      {%- set attr = attr|merge({widget: 'gs-row-end-time'}) -%}
       {%- set time_inline = true -%}
     {%- endif -%}
-  <div class="it-timepicker-wrapper{% if time_inline is defined and time_inline %} col{% endif %}">
-      <section class="time-spinner">
-        <div class="error_container" role="alert" aria-atomic="true"></div>
-        <fieldset>
-          <legend><span class="sr-only">Orario</span></legend>
-          <div>
-            <div{% with {attr: row_attr|merge({class: (row_attr.class|default('') ~ ' form-group')|trim})} %}{{ block('attributes') }}{% endwith %}>
-              <div class="calendar-input-container">
-                {{ block('form_label') }}
-                <button type="button" class="btn-time" id="{{ id }}_btnTime" aria-label="Fare clic o premere il tasto Invio o la barra spaziatrice per aprire la finestra di inserimento dell'orario">
-                  <svg class="icon">
-                    <use xlink:href="{{ asset('vendor/fontawesome/sprites/regular.svg') }}#clock">
-                  </svg>
-                </button>
-              <input class="form-control txtTime" id="{{ id }}" name="{{ full_name }}" type="text" placeholder="{{ 'label.form_time_placeholder'|trans }}"{% if value is not empty %} value="{{ value }}"{% endif %}{% if required %} required="required"{% endif %}{% if help is not empty or errors|length > 0 %} aria-describedby="{{ id }}_help"}}{% endif %} />
-              </div>
-              {%- if errors|length > 0 -%}
-                {{ form_errors(form) }}
-              {%- else -%}
-                {{ form_help(form) }}
-              {%- endif -%}
-            </div>
-          </div>
-        </fieldset>
-        <div class="spinner-control" aria-hidden="true" role="region" aria-label="finestra di inserimento orario" tabindex="-1">
-          <div class="spinner-hour spinner">
-            <input class="spinnerHour form-control" id="{{ id }}_hourSpinner" aria-label="ore" type="number" value="{% if value is not empty %}{{ value[0:2] }}{% else %}00{% endif %}" role="spinbutton" maxlength="2" aria-valuenow="{% if value is not empty %}{{ value[0:2] }}{% else %}00{% endif %}" aria-valuemax="23" aria-valuemin="0" bb-skip="3" />
-            <div class="button-wrapper">
-              <button type="button" class="button-hour btnHourUp" id="{{ id }}_hourUp" title="{{ 'label.form_time_hour_up'|trans }}">
-                <span class="icon-up"></span>
-              </button>
-              <button type="button" class="button-hour btnHourDown" id="{{ id }}_hourDown" title="{{ 'label.form_time_hour_down'|trans }}">
-                <span class="icon-down"></span>
-              </button>
-            </div>
-          </div>
-          <div class="spinner-min spinner">
-        <input class="spinnerMin form-control" id="{{ id }}_minSpinner" aria-label="minuti" type="number" value="{% if value is not empty %}{{ value[3:] }}{% else %}00{% endif %}" role="spinbutton" aria-valuenow="{% if value is not empty %}{{ value[3:] }}{% else %}00{% endif %}" maxlength="2" aria-valuemax="59" aria-valuemin="00" bb-skip="10" />
-            <div class="button-wrapper">
-              <button type="button" class="btnMinUp button-minute" id="{{ id }}_minUp" title="{{ 'label.form_time_min_up'|trans }}">
-                <span class="icon-up"></span>
-              </button>
-              <button type="button" class="btnMinDown button-minute" id="{{ id }}_minDown" title="{{ 'label.form_time_min_down'|trans }}">
-                <span class="icon-down"></span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div class="gs-time-wrapper{% if time_inline is defined and time_inline %} col{% endif %}">
+      {{ block('form_row') }}
     </div>
-    {%- if attr.widget is defined and attr.widget == 'gs-row-end' -%}
+    {%- if attr.widget is defined and attr.widget == 'gs-row-end-time' -%}
       </div>
     {%- endif -%}
   {%- else -%}
@@ -636,14 +593,14 @@
     <div class="fallback"></div>
     <div class="dz-message"></div>
     <button type="button" class="dz-clickable btn btn-success btn-sm">
-      <svg class="icon icon-white icon-xs mr-1" aria-hidden="true"><use xlink:href="{{ asset('vendor/fontawesome/sprites/solid.svg') }}#arrow-circle-up"></use></svg>
+      <svg class="icon icon-white icon-xs me-1" aria-hidden="true"><use xlink:href="{{ asset('vendor/fontawesome/sprites/solid.svg') }}#arrow-circle-up"></use></svg>
       <span>{{ translation_domain is same as(false) ? label : label|trans(label_translation_parameters, translation_domain) }}</span>
     </button>
     <ul class="upload-file-list dropzone-previews" id="{{ id }}_dzpreviews">
       <li id="{{ id }}_dztemplate" class="upload-file uploading">
         <svg class="icon icon-sm" aria-hidden="true"><use xlink:href="{{ asset('vendor/fontawesome/sprites/solid.svg') }}#file-alt"></use></svg>
         <p>
-          <span class="sr-only">Caricamento file:</span>
+          <span class="visually-hidden">Caricamento file:</span>
           <span data-dz-name></span>
           <span class="upload-file-weight" data-dz-size></span>
         </p>
@@ -692,7 +649,7 @@
     <span {% if form is not rootform %}id="{{id}}_help" {% endif %}class="{% if form is not rootform %}invalid-feedback{% else %}alert alert-danger{% endif %} d-block">
       {%- for error in errors -%}
         <span class="d-block">
-          <span class="form-error-icon badge badge-danger text-uppercase">{{ 'Error'|trans({}, 'validators') }}</span> <span class="form-error-message">{{ error.message }}</span>
+          <span class="form-error-icon badge bg-danger text-uppercase">{{ 'Error'|trans({}, 'validators') }}</span> <span class="form-error-message">{{ error.message }}</span>
         </span>
       {%- endfor -%}
     </span>

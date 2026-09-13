@@ -40,7 +40,7 @@ class ScansioneOrariaSettimanaleType extends AbstractType {
         'allow_delete' => true,
         'prototype' => false,
         'by_reference' => false,
-        'attr' => ['widget' => 'gs-row-start', 'class' => 'mr-4 gs-giorno'],
+        'attr' => ['widget' => 'gs-row-start', 'class' => 'me-4 gs-giorno'],
         'label_attr' => ['class' => 'position-relative text-center text-uppercase text-primary font-weight-bold pb-3'],
         'required' => false])
       ->add('giorno_2', CollectionType::class, ['label' => 'label.martedi',
@@ -51,7 +51,7 @@ class ScansioneOrariaSettimanaleType extends AbstractType {
         'allow_delete' => true,
         'prototype' => false,
         'by_reference' => false,
-        'attr' => ['widget' => 'gs-row-end', 'class' => 'ml-4 gs-giorno'],
+        'attr' => ['widget' => 'gs-row-end', 'class' => 'ms-4 gs-giorno'],
         'label_attr' => ['class' => 'position-relative text-center text-uppercase text-primary font-weight-bold pb-3'],
         'required' => false])
       ->add('giorno_3', CollectionType::class, ['label' => 'label.mercoledi',
@@ -62,7 +62,7 @@ class ScansioneOrariaSettimanaleType extends AbstractType {
         'allow_delete' => true,
         'prototype' => false,
         'by_reference' => false,
-        'attr' => ['widget' => 'gs-row-start', 'class' => 'mr-4 gs-giorno'],
+        'attr' => ['widget' => 'gs-row-start', 'class' => 'me-4 gs-giorno'],
         'label_attr' => ['class' => 'position-relative text-center text-uppercase text-primary font-weight-bold pb-3'],
         'required' => false])
       ->add('giorno_4', CollectionType::class, ['label' => 'label.giovedi',
@@ -73,7 +73,7 @@ class ScansioneOrariaSettimanaleType extends AbstractType {
         'allow_delete' => true,
         'prototype' => false,
         'by_reference' => false,
-        'attr' => ['widget' => 'gs-row-end', 'class' => 'ml-4 gs-giorno'],
+        'attr' => ['widget' => 'gs-row-end', 'class' => 'ms-4 gs-giorno'],
         'label_attr' => ['class' => 'position-relative text-center text-uppercase text-primary font-weight-bold pb-3'],
         'required' => false])
       ->add('giorno_5', CollectionType::class, ['label' => 'label.venerdi',
@@ -84,7 +84,7 @@ class ScansioneOrariaSettimanaleType extends AbstractType {
         'allow_delete' => true,
         'prototype' => false,
         'by_reference' => false,
-        'attr' => ['widget' => 'gs-row-start', 'class' => 'mr-4 gs-giorno'],
+        'attr' => ['widget' => 'gs-row-start', 'class' => 'me-4 gs-giorno'],
         'label_attr' => ['class' => 'position-relative text-center text-uppercase text-primary font-weight-bold pb-3'],
         'required' => false])
       ->add('giorno_6', CollectionType::class, ['label' => 'label.sabato',
@@ -95,7 +95,7 @@ class ScansioneOrariaSettimanaleType extends AbstractType {
         'allow_delete' => true,
         'prototype' => false,
         'by_reference' => false,
-        'attr' => ['widget' => 'gs-row-end', 'class' => 'ml-4 gs-giorno'],
+        'attr' => ['widget' => 'gs-row-end', 'class' => 'ms-4 gs-giorno'],
         'label_attr' => ['class' => 'position-relative text-center text-uppercase text-primary font-weight-bold pb-3'],
         'required' => false])
       ->add('submit', SubmitType::class, ['label' => 'label.submit',

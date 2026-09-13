@@ -23,7 +23,7 @@
       <ul class="nav nav-tabs nav-tabs-cards mb-5 border-bottom" role="tablist">
   {% for tab in tabs %}
         <li class="nav-item">
-          <a class="nav-link{{ loop.first ? ' active' }}" id="{{ tab[0] }}-tab" data-toggle="tab" href="#{{ tab[0] }}" role="tab" aria-controls="{{ tab[0] }}" aria-selected="true"><strong>{{ tab[1] }}</strong></a>
+          <a class="nav-link{{ loop.first ? ' active' }}" id="{{ tab[0] }}-tab" data-bs-toggle="tab" href="#{{ tab[0] }}" role="tab" aria-controls="{{ tab[0] }}" aria-selected="{{ loop.first ? 'true' : 'false' }}"><strong>{{ tab[1] }}</strong></a>
         </li>
   {% endfor %}
       </ul>

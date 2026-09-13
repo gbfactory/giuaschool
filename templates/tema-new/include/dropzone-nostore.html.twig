@@ -38,13 +38,13 @@ $(document).ready(function() {
         $.each(files, function(key,file){
           file.uploaded = response[key];
         });
-        $(id_previews+" li.dz-success p .sr-only").text("File caricato:");
+        $(id_previews+" li.dz-success p .visually-hidden").text("File caricato:");
         $(id_previews+" li.dz-success button").attr("title", "Elimina file caricato");
         $(id_previews+" li.dz-success .progress").hide();
         $(id_previews+" li.dz-success").removeClass("dz-success uploading").addClass("success");
       });
       this.on("error", function(file,msg) {
-        $(id_previews+" li.dz-error p .sr-only").text("Errore caricamento file:");
+        $(id_previews+" li.dz-error p .visually-hidden").text("Errore caricamento file:");
         $(id_previews+" li.dz-error button").hide();
         $(id_previews+" li.dz-error .progress").hide();
         $(id_previews+" li.dz-error").attr("title","Errore: "+msg);

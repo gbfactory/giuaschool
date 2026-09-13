@@ -1,0 +1,22 @@
+{### page-header: intestazione coerente delle pagine amministrative ###}
+{###    parametri: title, subtitle (opzionale), actions[{label, url, title, class, icon}] (opzionale) ###}
+<header class="gs-page-header">
+  <div class="gs-page-header__content">
+    <h1>{{ title }}</h1>
+{% if subtitle|default('') %}
+    <p>{{ subtitle }}</p>
+{% endif %}
+  </div>
+{% if actions|default([]) %}
+  <div class="gs-page-header__actions">
+  {% for action in actions %}
+    {% set action_class = action.class|default('btn-primary') %}
+    {% set action_icon_class = action.icon_class|default(action_class == 'btn-primary' ? 'icon-light' : 'icon-primary') %}
+    <a class="btn {{ action_class }}" href="{{ action.url }}"{% if action.title|default('') %} title="{{ action.title }}"{% endif %}>
+      <svg class="icon icon-sm {{ action_icon_class }}" aria-hidden="true"><use xlink:href="{{ asset('vendor/fontawesome/sprites/solid.svg') }}#{{ action.icon|default('plus') }}"></use></svg>
+      <span>{{ action.label }}</span>
+    </a>
+  {% endfor %}
+  </div>
+{% endif %}
+</header>

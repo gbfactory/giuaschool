@@ -2,7 +2,7 @@
 
 {% block pagina_contenuto %}
 <div class="container">
-  <h1 class="text-center mb-4">{{ titolo|trans }}</h1>
+  {{ include('tema-new/include/page-header.html.twig', {title: titolo|trans}) }}
   {{ include('tema-new/include/form.html.twig', {form: form[0], form_help: form[1]}) }}
   {{ include('tema-new/include/modal-confirm.html.twig') }}
 </div>
@@ -38,7 +38,7 @@ $(document).ready(function() {
       $('#modulo_server_help').html("{{ 'message.mailserver_help_php'|trans }}");
     }
   }).change();
-  $('#gs-modal-confirm').on('show.bs.modal', function (event) {
+  document.getElementById('gs-modal-confirm').addEventListener('show.bs.modal', function (event) {
     var title = 'Invio della mail di prova';
     $(this).find('#gs-modal-confirm-titolo').text(title);
     var html = 'Clicca sul pulsante CONTINUA per inviare la mail di prova all\'indirizzo <strong>{{ info.email }}<strong>';
@@ -47,7 +47,7 @@ $(document).ready(function() {
   $('#gs-modal-confirm-yes').click(function() {
     $('form[name="modulo"]').submit();
   });
-  $('#gs-modal-confirm').on('hide.bs.modal', function (event) {
+  document.getElementById('gs-modal-confirm').addEventListener('hide.bs.modal', function (event) {
     window.location = '{{ path('sistema_email') }}';
   });
   // init
@@ -57,7 +57,7 @@ $(document).ready(function() {
   $('#modulo_password').val('{{ info.password }}');
   {% endif %}
   {% if app.session.get('/APP/ROUTE/sistema_email/invio') is not empty %}
-  $('#gs-modal-confirm').modal({backdrop: 'static'});
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('gs-modal-confirm'), {backdrop: 'static'}).show();
   {% endif %}
 });
 </script>

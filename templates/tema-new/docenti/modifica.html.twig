@@ -2,72 +2,77 @@
 
 {% block pagina_contenuto %}
 <div class="container-fluid">
-  <h1 class="text-center mb-4">{{ titolo|trans }}</h1>
+  {{ include('tema-new/include/page-header.html.twig', {title: titolo|trans, actions: [{label: 'label.add'|trans, url: path('docenti_modifica_edit'), title: 'Nuovo utente'}]}) }}
   {{ include('tema-new/include/filtro.html.twig', {form: form[0]}) }}
-  <div class="table-responsive">
-    <table class="table table-bordered table-hover table-striped table-sm gs-sticky-header" style="margin-top:-2.5rem">
-      <thead class="thead-light">
-        <tr class="sticky-top">
-          <th class="col-auto" scope="col">{{ 'label.stato'|trans }}</th>
-          <th class="col-auto" scope="col">{{ 'label.cognome'|trans }}</th>
-          <th class="col-auto" scope="col">{{ 'label.nome'|trans }}</th>
+  <div class="table-responsive gs-user-table-wrapper">
+    <table class="table table-bordered table-hover table-sm gs-data-table gs-user-table">
+      <thead class="table-light">
+        <tr>
           <th class="col-auto" scope="col">{{ 'label.username'|trans }}</th>
+          <th class="col-auto" scope="col">Nome e cognome</th>
+          <th class="col-auto" scope="col">{{ 'label.email'|trans }}</th>
+          <th class="col-auto" scope="col">{{ 'label.codice_fiscale'|trans }}</th>
+          <th class="col-auto" scope="col">{{ 'label.abilitato'|trans }}</th>
+          <th class="col-auto" scope="col">SPID/CIE</th>
+          <th class="col-auto" scope="col">{{ 'label.ultimo_accesso'|trans }}</th>
           <th class="col-auto" scope="col">{{ 'label.action'|trans }}</th>
         </tr>
       </thead>
       <tbody>
   {% for u in dati.lista %}
-        <tr{% if not u.abilitato %} class="table-danger"{% endif %}>
-          <td>
-    {% if u.abilitato %}
-            <span title="{{ 'label.utente_attivo'|trans }}">
-              <svg class="icon icon-xs icon-success" aria-hidden="true">
-                <use xlink:href="{{ asset('vendor/fontawesome/sprites/solid.svg') }}#check"></use>
-              </svg>
-            </span>
-    {% else %}
-            <span title="{{ 'label.utente_disabilitato'|trans }}">
-              <svg class="icon icon-sm icon-danger" aria-hidden="true">
-                <use xlink:href="{{ asset('vendor/fontawesome/sprites/solid.svg') }}#ban"></use>
-              </svg>
-            </span>
-    {% endif %}
+        <tr{% if not u.abilitato %} class="gs-user-row--disabled"{% endif %}>
+          <td data-label="Username"><code>{{ u.username }}</code></td>
+          <td data-label="Nome e cognome"><strong>{{ u.nome }} {{ u.cognome }}</strong></td>
+          <td class="gs-user-email" data-label="Email">{{ u.email ?: '—' }}</td>
+          <td data-label="Codice fiscale">{{ u.codiceFiscale ?: '—' }}</td>
+          <td data-label="Abilitato">
+            <span class="gs-status-badge {{ u.abilitato ? 'gs-status-badge--yes' : 'gs-status-badge--no' }}">{{ u.abilitato ? 'Sì' : 'No' }}</span>
           </td>
-          <td><small>{{ u.cognome }}</small></td>
-          <td><small>{{ u.nome }}</small></td>
-          <td><small>{{ u.username }}</small></td>
-          <td class="pb-0">
-            <button type="button" class="btn btn-primary btn-xs mr-1 mb-1" data-toggle="modal" data-target="#gs-modal-info" data-titolo="{{ u.cognome }} {{ u.nome }}" data-cont-id="info-utente-{{ u.id }}">{{ 'label.show'|trans }}</button>
-            <a class="btn btn-primary btn-xs mr-1 mb-1" href="{{ path('docenti_modifica_edit', {'docente': u.id}) }}" role="button" title="Modifica i dati dell'utente">{{ 'label.edit'|trans }}</a>
-            <a class="btn btn-primary btn-xs mr-1 mb-1" href="{{ path('docenti_password', {'id': u.id, 'tipo': 'E'}) }}" role="button" title="Genera una nuova password e la invia all'utente tramite email">{{ 'label.email_password'|trans }}</a>
-            <a class="btn btn-primary btn-xs mr-1 mb-1" href="{{ path('docenti_password', {'id': u.id, 'tipo': 'P'}) }}" role="button" title="Genera una nuova password e la scarica come documento PDF">{{ 'label.pdf_password'|trans }}</a>
+          <td data-label="SPID/CIE">
+            <span class="gs-status-badge {{ u.spid ? 'gs-status-badge--yes' : 'gs-status-badge--no' }}">{{ u.spid ? 'Sì' : 'No' }}</span>
+          </td>
+          <td data-label="Ultimo accesso">{{ u.ultimoAccesso ? (u.ultimoAccesso|date('d/m/Y')) : 'Mai' }}</td>
+          <td class="gs-user-table__actions" data-label="Azioni">
+            <div class="gs-row-actions">
+              <a class="btn btn-primary btn-sm gs-row-actions__primary" href="{{ path('docenti_modifica_edit', {'docente': u.id}) }}">{{ 'label.edit'|trans }}</a>
+              <div class="dropdown">
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" id="gs-actions-docente-{{ u.id }}" type="button" data-bs-toggle="dropdown" aria-expanded="false">Altre azioni</button>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="gs-actions-docente-{{ u.id }}">
+                  <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#gs-modal-info" data-titolo="{{ u.cognome }} {{ u.nome }}" data-cont-id="info-utente-{{ u.id }}">{{ 'label.show'|trans }}</button>
+                  <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#gs-modal-confirm" data-titolo="Nuova password per {{ u.nome }} {{ u.cognome }}" data-contenuto="La password attuale verrà invalidata e quella nuova sarà inviata via email. Vuoi continuare?" data-href="{{ path('docenti_password', {'id': u.id, 'tipo': 'E'}) }}">{{ 'label.email_password'|trans }}</button>
+                  <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#gs-modal-confirm" data-titolo="Nuova password per {{ u.nome }} {{ u.cognome }}" data-contenuto="La password attuale verrà invalidata e quella nuova sarà scaricata in PDF. Vuoi continuare?" data-href="{{ path('docenti_password', {'id': u.id, 'tipo': 'P'}) }}">{{ 'label.pdf_password'|trans }}</button>
     {% if app.session.get('/CONFIG/ACCESSO/id_provider') is empty and u.otp %}
-            <a class="btn btn-danger btn-xs mr-1 mb-1" href="{{ path('docenti_reset', {'id': u.id}) }}" role="button" title="Reset codice OTP">{{ 'label.reset_otp'|trans }}</a>
+                  <div class="dropdown-divider"></div>
+                  <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#gs-modal-confirm" data-titolo="Reset OTP di {{ u.nome }} {{ u.cognome }}" data-contenuto="Il codice OTP attuale verrà invalidato. Vuoi continuare?" data-href="{{ path('docenti_reset', {'id': u.id}) }}" data-variante="danger">{{ 'label.reset_otp'|trans }}</button>
     {% endif %}
+                  <div class="dropdown-divider"></div>
     {% if u.abilitato %}
-            <a class="btn btn-danger btn-xs mb-1" href="{{ path('docenti_abilita', {'id': u.id, 'abilita': 0}) }}" role="button" title="Disabilita l'utente">{{ 'label.disable'|trans }}</a>
+                  <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#gs-modal-confirm" data-titolo="Disabilita {{ u.nome }} {{ u.cognome }}" data-contenuto="L'utente non potrà più accedere finché non verrà riabilitato. Vuoi continuare?" data-href="{{ path('docenti_abilita', {'id': u.id, 'abilita': 0}) }}" data-variante="danger">{{ 'label.disable'|trans }}</button>
     {% else %}
-            <a class="btn btn-success btn-xs mb-1" href="{{ path('docenti_abilita', {'id': u.id, 'abilita': 1}) }}" role="button" title="Abilita l'utente">{{ 'label.enable'|trans }}</a>
+                  <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#gs-modal-confirm" data-titolo="Abilita {{ u.nome }} {{ u.cognome }}" data-contenuto="L'utente potrà nuovamente accedere. Vuoi continuare?" data-href="{{ path('docenti_abilita', {'id': u.id, 'abilita': 1}) }}">{{ 'label.enable'|trans }}</button>
     {% endif %}
+                </div>
+              </div>
+            </div>
             <div class="d-none" id="info-utente-{{ u.id }}">
               <dl class="row">
-                <dt class="col-sm-2 text-right">{{ 'label.nome'|trans }}</dt>
+                <dt class="col-sm-2 text-end">{{ 'label.nome'|trans }}</dt>
                 <dd class="col-sm-4">{{ u.nome }}</dd>
-                <dt class="col-sm-2 text-right">{{ 'label.cognome'|trans }}</dt>
+                <dt class="col-sm-2 text-end">{{ 'label.cognome'|trans }}</dt>
                 <dd class="col-sm-4">{{ u.cognome }}</dd>
-                <dt class="col-sm-2 text-right">{{ 'label.sesso'|trans }}</dt>
+                <dt class="col-sm-2 text-end">{{ 'label.sesso'|trans }}</dt>
                 <dd class="col-sm-4">{{ (u.sesso == 'M' ? 'label.maschile' : 'label.femminile')|trans }}</dd>
-                <dt class="col-sm-2 text-right">{{ 'label.codice_fiscale'|trans }}</dt>
+                <dt class="col-sm-2 text-end">{{ 'label.codice_fiscale'|trans }}</dt>
                 <dd class="col-sm-4">{{ u.codiceFiscale }}</dd>
-                <dt class="col-sm-2 text-right">{{ 'label.ruolo'|trans }}</dt>
+                <dt class="col-sm-2 text-end">{{ 'label.ruolo'|trans }}</dt>
                 <dd class="col-sm-4">{{ ('label.'~u.roles[0])|trans }}</dd>
-                <dt class="col-sm-2 text-right">{{ 'label.spid'|trans }}</dt>
+                <dt class="col-sm-2 text-end">{{ 'label.spid'|trans }}</dt>
                 <dd class="col-sm-4">{{ u.spid ? 'Si' : 'No' }}</dd>
-                <dt class="col-sm-2 text-right">{{ 'label.username'|trans }}</dt>
+                <dt class="col-sm-2 text-end">{{ 'label.username'|trans }}</dt>
                 <dd class="col-sm-4">{{ u.username }}</dd>
-                <dt class="col-sm-2 text-right">{{ 'label.email'|trans }}</dt>
+                <dt class="col-sm-2 text-end">{{ 'label.email'|trans }}</dt>
                 <dd class="col-sm-4">{{ u.email }}</dd>
-                <dt class="col-sm-2 text-right">{{ 'label.ultimo_accesso'|trans }}</dt>
+                <dt class="col-sm-2 text-end">{{ 'label.ultimo_accesso'|trans }}</dt>
                 <dd class="col-sm-4">{{ u.ultimoAccesso ? (u.ultimoAccesso|date('d/m/Y H:i:s')) : 'NESSUNO' }}</dd>
               </dl>
             </div>
@@ -75,22 +80,15 @@
         </tr>
   {% endfor %}
       </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="5">
-            <a class="btn btn-primary btn-sm" href="{{ path('docenti_modifica_edit') }}" role="button" title="Nuovo utente">{{ 'label.add'|trans }}</a>
-          </td>
-        </tr>
-      </tfoot>
     </table>
   </div>
   {{ include('tema-new/include/paginazione.html.twig', {maxPagine: dati.maxPagine, pagina: info.pagina, url: 'docenti_modifica'}) }}
   {{ include('tema-new/include/modal-info.html.twig') }}
+  {{ include('tema-new/include/modal-confirm.html.twig') }}
 </div>
 {% endblock %}
 
 {% block pagina_js_fine %}
-{{ include('tema-new/include/thfloat.html.twig') }}
 <script>
 $(document).ready(function() {
   $("#gs-paginazione").on("submit", function() {
@@ -98,7 +96,7 @@ $(document).ready(function() {
     window.location.href = "{{ path('docenti_modifica') }}/"+p;
     return false;
   });
-  $('#gs-modal-info').on('show.bs.modal', function (e) {
+  document.getElementById('gs-modal-info').addEventListener('show.bs.modal', function (e) {
     var titolo = $(e.relatedTarget).data('titolo');
     var contenuto = $('#'+$(e.relatedTarget).data('cont-id')).html();
     $(this).find('#gs-modal-info-titolo').html(titolo);

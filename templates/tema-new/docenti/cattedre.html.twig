@@ -2,12 +2,15 @@
 
 {% block pagina_contenuto %}
 <div class="container-fluid">
-  <h1 class="text-center mb-4">{{ titolo|trans }}</h1>
+  {{ include('tema-new/include/page-header.html.twig', {title: titolo|trans, actions: [
+    {label: 'label.add'|trans, url: path('docenti_cattedre_edit', {id: 0}), title: 'Nuova cattedra'},
+    {label: 'Aggiungi supplenza', url: path('docenti_cattedre_supplenza'), title: 'Nuova cattedra di supplenza', class: 'btn-outline-primary', icon: 'user-clock'}
+  ]}) }}
   {{ include('tema-new/include/filtro.html.twig', {form: form[0]}) }}
   <div class="table-responsive">
-    <table class="table table-bordered table-hover table-striped table-sm gs-sticky-header" style="margin-top:-2.5rem">
-      <thead class="thead-light">
-        <tr class="sticky-top">
+    <table class="table table-bordered table-hover table-striped table-sm gs-data-table">
+      <thead class="table-light">
+        <tr>
           <th class="col-auto" scope="col">{{ 'label.stato'|trans }}</th>
           <th class="col-auto" scope="col">{{ 'label.classe'|trans }}</th>
           <th class="col-auto" scope="col">{{ 'label.materia'|trans }}</th>
@@ -39,7 +42,7 @@
           <td><small>{{ c.docente.cognome }} {{ c.docente.nome }} ({{ c.docente.username }})</small></td>
           <td><small>{{ ('label.tipo_'~c.tipo)|trans }}{{ c.docenteSupplenza ? ' (supplente di '~c.docenteSupplenza.cognome~' '~c.docenteSupplenza.nome~')' }}</small></td>
           <td class="pb-0">
-            <a class="btn btn-primary btn-xs mr-1 mb-1" href="{{ path('docenti_cattedre_edit', {'id': c.id}) }}" role="button" title="Modifica i dati della cattedra">{{ 'label.edit'|trans }}</a>
+            <a class="btn btn-primary btn-xs me-1 mb-1" href="{{ path('docenti_cattedre_edit', {'id': c.id}) }}" role="button" title="Modifica i dati della cattedra">{{ 'label.edit'|trans }}</a>
     {% if c.attiva %}
             <a class="btn btn-danger btn-xs mb-1" href="{{ path('docenti_cattedre_abilita', {'id': c.id, 'abilita': 0}) }}" role="button" title="Disabilita la cattedra">{{ 'label.disable'|trans }}</a>
     {% else %}
@@ -49,14 +52,6 @@
         </tr>
   {% endfor %}
       </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="6">
-            <a class="btn btn-primary btn-sm mr-3" href="{{ path('docenti_cattedre_edit', {id: 0}) }}" role="button" title="Nuova cattedra">{{ 'label.add'|trans }}</a>
-            <a class="btn btn-primary btn-sm" href="{{ path('docenti_cattedre_supplenza') }}" role="button" title="Nuova cattedra di supplenza">Aggiungi supplenza</a>
-          </td>
-        </tr>
-      </tfoot>
     </table>
   </div>
   {{ include('tema-new/include/paginazione.html.twig', {maxPagine: dati.maxPagine, pagina: info.pagina, url: 'docenti_cattedre'}) }}
@@ -64,7 +59,6 @@
 {% endblock %}
 
 {% block pagina_js_fine %}
-{{ include('tema-new/include/thfloat.html.twig') }}
 <script>
 $(document).ready(function() {
   $("#gs-paginazione").on("submit", function() {

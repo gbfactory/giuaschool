@@ -1,4 +1,4 @@
-{### filtro: form inline per filtro sui dati di ricerca ###}
+{### filtro: pannello per il filtro sui dati di ricerca ###}
 {###    parametri: form ###}
 {% form_theme form with 'tema-new/layout-form.html.twig' only %}
 
@@ -7,10 +7,35 @@
 <div class="alert alert-{{ tipo }}" role="alert">{{ msg|trans|raw }}</div>
   {% endfor %}
 {% endfor %}
-{{ form_start(form, {attr: {class: 'mr-1'}}) }}
-<div id="{{ form.vars.id }}" class="form-row">
-  {% for child in form|filter(child => not child.rendered) %}
-    {{ form_row(child, {inline: true}) }}
-  {% endfor %}
-</div>
-{{ form_end(form) }}
+<details class="gs-filter-panel">
+  <summary class="gs-filter-panel__summary">
+    <span class="gs-filter-panel__title">
+      <svg class="icon icon-sm" aria-hidden="true"><use xlink:href="{{ asset('vendor/fontawesome/sprites/solid.svg') }}#filter"></use></svg>
+      <span>Filtra i risultati</span>
+      <span class="gs-filter-panel__count" data-gs-filter-count aria-live="polite" hidden></span>
+    </span>
+    <span class="gs-filter-panel__state" aria-hidden="true">
+      <span class="gs-filter-panel__state-open">Nascondi</span>
+      <span class="gs-filter-panel__state-closed">Mostra</span>
+      <svg class="icon icon-xs gs-filter-panel__chevron"><use xlink:href="{{ asset('vendor/fontawesome/sprites/solid.svg') }}#chevron-down"></use></svg>
+    </span>
+  </summary>
+  <div class="gs-filter-panel__body">
+    {{ form_start(form, {attr: {class: 'gs-filter-form'}}) }}
+    <div id="{{ form.vars.id }}_fields" class="row g-3">
+    {% for child in form|filter(child => not child.rendered and child.vars.name != 'submit') %}
+      {{ form_row(child, {inline: true}) }}
+    {% endfor %}
+    </div>
+    <div class="gs-filter-actions">
+    {% if form.submit is defined %}
+      {{ form_widget(form.submit, {attr: {class: 'btn-primary'}}) }}
+    {% endif %}
+      <a class="btn btn-outline-primary gs-filter-reset" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'gs-reset-filter': 1})) }}">
+        <svg class="icon icon-sm icon-primary" aria-hidden="true"><use xlink:href="{{ asset('vendor/fontawesome/sprites/solid.svg') }}#times"></use></svg>
+        <span>Azzera filtri</span>
+      </a>
+    </div>
+    {{ form_end(form) }}
+  </div>
+</details>

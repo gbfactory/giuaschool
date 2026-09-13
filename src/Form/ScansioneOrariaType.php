@@ -39,7 +39,7 @@ class ScansioneOrariaType extends AbstractType {
         'required' => true,
         'mapped' => false])
       ->add('ora', TextType::class, ['label' => 'label.ora',
-        'attr' => ['widget' => 'gs-row-start', 'class' => 'border-0 pl-1 pr-1 text-center'],
+        'attr' => ['widget' => 'gs-row-start', 'class' => 'border-0 ps-1 pe-1 text-center'],
         'row_attr' => ['class' => 'col-1'],
         'disabled' => true,
         'required' => true])
